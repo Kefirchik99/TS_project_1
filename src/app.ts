@@ -138,12 +138,44 @@ abstract class Component<T extends HTMLElement, U extends HTMLElement> {
     private attach(insertAtBeginning: boolean) {
         this.hostElement.insertAdjacentElement(
             insertAtBeginning ? 'afterbegin' : 'beforeend',
-            this.element);
+            this.element
+        );
     }
 
     abstract configure(): void;
     abstract renderContent(): void;
 
+}
+
+// ProjectItem Class
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+    private project: Project;
+
+    get persons() {
+        if (this.project.people === 1) {
+            return '1 person';
+        } else {
+            return `${this.project.people} persons`;
+        }
+    }
+
+    constructor(hostId: string, project: Project) {
+        super('single-project', hostId, false, project.id);
+        this.project = project;
+
+        this.configure();
+        this.renderContent();
+    }
+
+    configure() { }
+
+    renderContent() {
+        this.element.querySelector('h2')!.textContent = this.project.title;
+        this.element.querySelector(
+            'h3'
+        )!.textContent = this.persons + ' assigned';
+        this.element.querySelector('p')!.textContent = this.project.description;
+    }
 }
 
 
@@ -186,9 +218,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
         )! as HTMLUListElement;
         listEl.innerHTML = '';
         for (const prjItem of this.assignedProjects) {
-            const listItem = document.createElement('li');
-            listItem.textContent = prjItem.title;
-            listEl.appendChild(listItem);
+            new ProjectItem(this.element.querySelector('ul')!.id, prjItem);
         }
     }
 }
@@ -271,6 +301,6 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
         }
     }
 }
-const testInput = new ProjectInput();
+const prjInput = new ProjectInput();
 const activePrjList = new ProjectList('active');
 const finishedPrjList = new ProjectList('finished');
