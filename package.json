@@ -14,6 +14,7 @@
   "author": "JJ",
   "license": "ISC",
   "devDependencies": {
-    "lite-server": "^2.5.4"
+    "lite-server": "^2.5.4",
+    "undici-types": "^7.15.0"
   }
 }
